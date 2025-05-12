@@ -1,0 +1,76 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:autoMirrored="true"
+    android:tint="#000000">
+
+    <!-- Body Path -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="
+            M520,920
+            L520,680
+            L436,600
+            L396,776
+            L120,720
+            L136,640
+            L328,680
+            L392,356
+            L320,384
+            L320,520
+            L240,520
+            L240,332
+            L398,264
+            Q433,249 449.5,244.5
+            Q466,240 480,240
+            Q501,240 519,251
+            Q537,262 548,280
+            L588,344
+            Q614,386 658.5,413
+            Q703,440 760,440
+            L760,520
+            Q694,520 636.5,492.5
+            Q579,465 540,420
+            L516,540
+            L600,620
+            L600,920
+            L520,920
+            Z" />
+
+    <!-- Head -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="
+            M540,220
+            Q507,220 483.5,196.5
+            Q460,173 460,140
+            Q460,107 483.5,83.5
+            Q507,60 540,60
+            Q573,60 596.5,83.5
+            Q620,107 620,140
+            Q620,173 596.5,196.5
+            Q573,220 540,220
+            Z" />
+
+    <!-- Left Hand (aligned to end of arm) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M264,480a40,40 0 1,0 32,0" />
+
+    <!-- Right Hand (aligned to hand near 600,620) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M748,442a40,40 0 1,0 32,0" />
+
+    <!-- Left Foot (aligned to end of leg) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M120,720a16,16 0 1,0 32,0a16,16 0 1,0 -32,0" />
+
+    <!-- Right Foot (aligned to bottom of right leg) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M584,903a16,16 0 1,0 32,0a16,16 0 1,0 -32,0" />
+</vector>
