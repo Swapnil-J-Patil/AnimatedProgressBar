@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.swapnil.progressbar.ui.theme.ProgressBarTheme
@@ -60,8 +61,9 @@ class MainActivity : ComponentActivity() {
             ProgressBarTheme {
                 Box(modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center) {
-                    GrimReaperAttackAnimation()
-                    RunningManCanvas(modifier = Modifier.padding(top=200.dp))
+                    //GrimReaperAttackAnimation()
+                   RunningManAnimation()
+                    //RunningManCanvas(modifier = Modifier.padding(top=200.dp))
                 }
             }
         }
@@ -132,274 +134,127 @@ fun GrimReaperAttackAnimation() {
     }
 }
 
+
+
 @Composable
-fun RunningManCanvas(modifier: Modifier = Modifier) {
-    val duration = 700
-    val transition = rememberInfiniteTransition()
+fun RunningManAnimation() {
+    val infiniteTransition = rememberInfiniteTransition(label = "limbAnimations")
 
-    val frontArmRotation by transition.animateFloat(
-        initialValue = 24f,
-        targetValue = 164f,
+    val armAngleLeft by infiniteTransition.animateFloat(
+        initialValue = 5f, // Opposite swing to right arm
+        targetValue = -90f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = duration, easing = LinearEasing),
+            animation = tween(durationMillis = 400, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
-        )
+        ), label = "armLeft"
     )
 
-    val legRotation by transition.animateFloat(
-        initialValue = 10f,
-        targetValue = 108f,
+    val armAngleRight by infiniteTransition.animateFloat(
+        initialValue = -15f,
+        targetValue = 30f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = duration, easing = LinearEasing),
+            animation = tween(durationMillis = 400, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
-        )
+        ), label = "arm"
     )
 
-    // ✅ Precompute dp to px here (allowed in @Composable context)
-    val density = LocalDensity.current
-    val headRadiusPx = with(density) { 8.dp.toPx() }
-    val armLengthPx = with(density) { 11.dp.toPx() }
-    val legLengthPx = with(density) { 12.dp.toPx() }
-    val bodyWidthPx = with(density) { 8.dp.toPx() }
-    val bodyHeightPx = with(density) { 30.dp.toPx() }
-    val armOffsetYPx = with(density) { 6.dp.toPx() }
-    val legOffsetYPx = with(density) { 10.dp.toPx() }
-    val cornerRadiusPx = with(density) { 4.dp.toPx() }
-    val bodyTopOffsetPx = with(density) { 10.dp.toPx() }
-    val headOffsetYPx = with(density) { 20.dp.toPx() }
-    val limbHeightPx = with(density) { 4.dp.toPx() }
+    val legAngle by infiniteTransition.animateFloat(
+        initialValue = 20f,
+        targetValue = -30f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 400, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "leg"
+    )
 
-    Canvas(modifier = modifier.size(100.dp)) {
-        val centerX = size.width / 2
-        val centerY = size.height / 2
-
+    Box(
+        modifier = Modifier
+            .size(300.dp)
+            .background(Color.White),
+        contentAlignment = Alignment.Center
+    ) {
         // Head
-        drawCircle(
-            color = Color.White,
-            radius = headRadiusPx,
-            center = Offset(centerX, centerY - headOffsetYPx)
+        Image(
+            painter = painterResource(id = R.drawable.head),
+            contentDescription = "Head",
+            modifier = Modifier
+                .size(10.dp)
+                .offset(x = (-2).dp, y = (-59).dp)
         )
 
-        // Body
-        drawRoundRect(
-            color = Color.White,
-            topLeft = Offset(centerX - bodyWidthPx / 2, centerY - bodyTopOffsetPx),
-            size = Size(bodyWidthPx, bodyHeightPx),
-            cornerRadius = CornerRadius(cornerRadiusPx)
+        // Torso
+        Image(
+            painter = painterResource(id = R.drawable.torso),
+            contentDescription = "Torso",
+            modifier = Modifier
+                .size(15.dp, 40.dp)
+                .offset(x = (-6).dp, y = -42.dp)
         )
 
-        // Front Arm
-        withTransform({
-            rotate(frontArmRotation, pivot = Offset(centerX, centerY - armOffsetYPx))
-        }) {
-            drawRoundRect(
-                color = Color.White,
-                topLeft = Offset(centerX, centerY - armOffsetYPx),
-                size = Size(armLengthPx, limbHeightPx),
-                cornerRadius = CornerRadius(2.dp.toPx())
-            )
-        }
+        // Left Arm
+        Image(
+            painter = painterResource(id = R.drawable.left_hand),
+            contentDescription = "Left Arm",
+            modifier = Modifier
+                .size(20.dp)
+                .offset(x = (-12).dp, y = (-44).dp)
+                .rotate(15f)
+                .graphicsLayer {
+                    rotationZ = armAngleLeft
+                    transformOrigin = TransformOrigin(0.7f, 0.2f)
+                }
+        )
 
-        // Front Leg
-        withTransform({
-            rotate(legRotation, pivot = Offset(centerX, centerY + legOffsetYPx))
-        }) {
-            drawRoundRect(
-                color = Color.White,
-                topLeft = Offset(centerX, centerY + legOffsetYPx),
-                size = Size(legLengthPx, limbHeightPx),
-                cornerRadius = CornerRadius(2.dp.toPx())
-            )
-        }
+        // Right Arm
+        Image(
+            painter = painterResource(id = R.drawable.right_hand),
+            contentDescription = "Right Arm",
+            modifier = Modifier
+                .size(20.dp)
+                .offset(x = (2).dp, y = (-45).dp)
+                .graphicsLayer {
+                    rotationZ = armAngleRight
+                    transformOrigin = TransformOrigin(0.0f, 0f)
+                }
+        )
+
+        // Left Leg
+        Image(
+            painter = painterResource(id = R.drawable.left_leg),
+            contentDescription = "Left Leg",
+            modifier = Modifier
+                .size(20.dp)
+                .offset(x = (-15).dp, y = (-26).dp)
+                .graphicsLayer {
+                    rotationZ = legAngle
+                    transformOrigin = TransformOrigin(0.5f, 0f)
+                }
+        )
+
+        // Right Leg
+        Image(
+            painter = painterResource(id = R.drawable.right_leg),
+            contentDescription = "Right Leg",
+            modifier = Modifier
+                .size(20.dp)
+                .offset(x = (-5).dp, y = (-24).dp)
+                .graphicsLayer {
+                    rotationZ = -legAngle
+                    transformOrigin = TransformOrigin(0.5f, 0f)
+                }
+        )
     }
 }
+
+
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun Preview() {
-    Box(modifier = Modifier.fillMaxSize()
-        .background(Color.Black),
-        contentAlignment = Alignment.Center) {
-        GrimReaperAttackAnimation()
-        RunningManCanvas(modifier = Modifier.padding(top=200.dp))
-    }
-}
-@Composable
-fun RunningMan(modifier: Modifier = Modifier) {
-    val duration = 700
-    val infiniteTransition = rememberInfiniteTransition(label = "runningMan")
-
-    val outerTranslateY by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 4f,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = duration
-                0f at 0
-                4f at 250
-                0f at 500
-                4f at 750
-                0f at 1000
-            },
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "outerY"
-    )
-
-    val bodyRotation by infiniteTransition.animateFloat(
-        initialValue = 32f,
-        targetValue = 16f,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = duration
-                32f at 0
-                24f at 175
-                16f at 350
-                24f at 525
-                32f at 700
-            }
-        ),
-        label = "bodyRotation"
-    )
-
-    Box(
-        modifier = modifier
-            .graphicsLayer { translationY = outerTranslateY }
-            .size(200.dp)
-    ) {
-        Body(rotation = bodyRotation)
-    }
+fun RunningManPreview() {
+    RunningManAnimation()
 }
 
-@Composable
-private fun Body(rotation: Float) {
-    Box(
-        modifier = Modifier
-            .offset(y = 10.dp)
-            .size(width = 8.dp, height = 15.dp)
-            .graphicsLayer(
-                rotationZ = rotation,
-                transformOrigin = TransformOrigin(0.5f, 11f / 15f)
-            )
-            .background(
-                Color.Black, shape = RoundedCornerShape(4.dp)
-            )
-    ) {
-        // Head
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = (-8).dp)
-                .size(8.dp)
-                .background(
-                    Color.Black, CircleShape
-                )
-        )
-
-        // Arms
-        Limb(
-            angleFrom = 24f, angleTo = 164f, duration = 700, front = true,
-            modifier = Modifier.align(Alignment.TopCenter) // center-aligned
-        )
-
-        Limb(
-            angleFrom = 164f, angleTo = 24f, duration = 700, front = false,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-
-        // Legs
-        Leg(
-            angleFrom = 10f, angleTo = 108f, duration = 700, front = true,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-
-        Leg(
-            angleFrom = 108f, angleTo = 10f, duration = 700, front = false,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-
-    }
-}
-
-@Composable
-private fun Limb(
-    angleFrom: Float,
-    angleTo: Float,
-    duration: Int,
-    front: Boolean,
-    modifier: Modifier
-) {
-    val rotation by rememberInfiniteTransition(label = "limb").animateFloat(
-        initialValue = angleFrom,
-        targetValue = angleTo,
-        animationSpec = infiniteRepeatable(
-            animation = tween(duration, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "limbRotation"
-    )
-    Box(
-        modifier = modifier
-            .zIndex(if (front) 1f else 0f)
-            .size(width = 11.dp, height = 4.dp)
-            .graphicsLayer(
-                rotationZ = rotation,
-                transformOrigin = TransformOrigin(0f, 0.5f) // pivot at shoulder
-            )
-            .background(Color.Black, RoundedCornerShape(2.dp))
-    ) {
-        Box(
-            modifier = Modifier
-                .offset(x = 6.dp)
-                .size(width = 11.dp, height = 4.dp)
-                .graphicsLayer(
-                    rotationZ = if (front) -48f else -36f,
-                    transformOrigin = TransformOrigin(0f, 0.5f)
-                )
-                .background(Color.Black, RoundedCornerShape(2.dp))
-        )
-    }
-}
-
-@Composable
-private fun Leg(
-    angleFrom: Float,
-    angleTo: Float,
-    duration: Int,
-    front: Boolean,
-    modifier: Modifier
-) {
-    val rotation by rememberInfiniteTransition(label = "leg").animateFloat(
-        initialValue = angleFrom,
-        targetValue = angleTo,
-        animationSpec = infiniteRepeatable(
-            animation = tween(duration, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "legRotation"
-    )
-    Box(
-        modifier = modifier
-            .zIndex(if (front) 1f else 0f)
-            .size(width = 12.dp, height = 4.dp)
-            .graphicsLayer(
-                rotationZ = rotation,
-                transformOrigin = TransformOrigin(0f, 0.5f) // pivot at hip
-            )
-            .background(if (front) Color.Black else Color.Transparent, RoundedCornerShape(2.dp))
-    ) {
-        Box(
-            modifier = Modifier
-                .offset(x = 6.dp)
-                .size(width = 12.dp, height = 4.dp)
-                .graphicsLayer(
-                    rotationZ = if (front) 18f else 76f,
-                    transformOrigin = TransformOrigin(0f, 0.5f)
-                )
-                .background(Color.Black, RoundedCornerShape(2.dp))
-        )
-    }
-}
 
 
 
