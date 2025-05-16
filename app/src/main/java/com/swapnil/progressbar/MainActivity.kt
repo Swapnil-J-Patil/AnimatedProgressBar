@@ -197,8 +197,8 @@ fun RunningManAnimation() {
             contentDescription = "Left Arm",
             modifier = Modifier
                 .size(20.dp)
-                .offset(x = (-12).dp, y = (-44).dp)
-                .rotate(15f)
+                .offset(x = (-11).dp, y = (-44).dp)
+                .rotate(20f)
                 .graphicsLayer {
                     rotationZ = armAngleLeft
                     transformOrigin = TransformOrigin(0.7f, 0.2f)
@@ -211,7 +211,7 @@ fun RunningManAnimation() {
             contentDescription = "Right Arm",
             modifier = Modifier
                 .size(20.dp)
-                .offset(x = (2).dp, y = (-45).dp)
+                .offset(x = (4).dp, y = (-45).dp)
                 .graphicsLayer {
                     rotationZ = armAngleRight
                     transformOrigin = TransformOrigin(0.0f, 0f)
