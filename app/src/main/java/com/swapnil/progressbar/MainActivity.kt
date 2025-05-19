@@ -18,9 +18,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -223,11 +225,12 @@ fun RunningManAnimation() {
             painter = painterResource(id = R.drawable.left_leg),
             contentDescription = "Left Leg",
             modifier = Modifier
-                .size(20.dp)
+                .height(20.dp)
+                .width(30.dp)
                 .offset(x = (-15).dp, y = (-26).dp)
                 .graphicsLayer {
                     rotationZ = legAngle
-                    transformOrigin = TransformOrigin(0.5f, 0f)
+                    transformOrigin = TransformOrigin(0.7f, 0f)
                 }
         )
 
@@ -236,7 +239,8 @@ fun RunningManAnimation() {
             painter = painterResource(id = R.drawable.right_leg),
             contentDescription = "Right Leg",
             modifier = Modifier
-                .size(20.dp)
+                .height(20.dp)
+                .width(30.dp)
                 .offset(x = (-5).dp, y = (-24).dp)
                 .graphicsLayer {
                     rotationZ = -legAngle
