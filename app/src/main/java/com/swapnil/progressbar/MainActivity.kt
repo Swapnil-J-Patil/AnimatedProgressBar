@@ -176,7 +176,25 @@ fun GrimReaperChaseProgressBar(progress: Float) {
                         RunningManAnimation()
                     }
                 }
+                else {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .offset(x = (2).dp, y = -35.dp)
+                    )
+                    {
 
+                        Image(
+                            painter = painterResource(id = R.drawable.rip),
+                            contentDescription = "RIP",
+                            modifier = Modifier
+                                .height(50.dp)
+                                .width(30.dp)
+                                .offset(x = (-2).dp, y = (-19).dp)
+                        )
+
+                    }
+                }
             }
         }
     }
