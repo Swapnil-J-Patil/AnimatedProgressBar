@@ -19,6 +19,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +31,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,45 +72,73 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProgressBarTheme {
-                Box(modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center) {
-                    //
-                   /* Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        GrimReaperAttackAnimation()
-                        Spacer(Modifier.width(20.dp))
-                        RunningManAnimation()
-                    }*/
-                    //RunningManCanvas(modifier = Modifier.padding(top=200.dp))
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     var progress by remember { mutableStateOf(0f) }
+                    var isAnimating by remember { mutableStateOf(false) }
 
-                    LaunchedEffect(Unit) {
-                        val checkpoints = listOf(0f, 0.10f, 0.25f, 0.45f, 0.75f, 1f)
+                    // This state will trigger recomposition for days left
+                    val daysRemaining = (100 - (progress * 100)).toInt().coerceAtLeast(0)
 
-                        for (i in 0 until checkpoints.lastIndex) {
-                            val start = checkpoints[i]
-                            val end = checkpoints[i + 1]
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Countdown Text
 
-                            val steps = 20 // Number of intermediate frames for smoothness
-                            val delayPerStep = 20L // ms per step
+                        Text(
+                            text = "Days Remaining: $daysRemaining",
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
 
-                            for (step in 1..steps) {
-                                progress = start + (end - start) * (step / steps.toFloat())
-                                delay(delayPerStep)
-                            }
-
-                            delay(100) // Optional pause between sections
+                        // Button to trigger animation
+                        Button(
+                            onClick = {
+                                if (!isAnimating) {
+                                    isAnimating = true
+                                    progress = 0f
+                                }
+                            },
+                            enabled = !isAnimating,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBE002A)),
+                        ) {
+                            Text(text = "Send Death",
+                                color = if(!isAnimating)Color.White else Color.Transparent)
                         }
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        // Your Grim Reaper Progress Bar
+                        GrimReaperChaseProgressBar(progress = progress)
                     }
 
+                    // Animate progress when triggered
+                    LaunchedEffect(isAnimating) {
+                        if (isAnimating) {
+                            val checkpoints = listOf(0f, 0.10f, 0.25f, 0.45f, 0.75f, 1f)
 
+                            for (i in 0 until checkpoints.lastIndex) {
+                                val start = checkpoints[i]
+                                val end = checkpoints[i + 1]
 
-                    GrimReaperChaseProgressBar(progress = progress)
+                                val steps = 20
+                                val delayPerStep = 20L
 
+                                for (step in 1..steps) {
+                                    progress = start + (end - start) * (step / steps.toFloat())
+                                    delay(delayPerStep)
+                                }
+
+                                delay(100)
+                            }
+
+                            isAnimating = false // Reset for next run
+                        }
+                    }
                 }
+
             }
         }
     }
