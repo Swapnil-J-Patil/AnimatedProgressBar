@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -16,8 +17,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -43,11 +48,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.swapnil.progressbar.ui.theme.ProgressBarTheme
@@ -63,9 +70,42 @@ class MainActivity : ComponentActivity() {
             ProgressBarTheme {
                 Box(modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center) {
-                    //GrimReaperAttackAnimation()
-                   RunningManAnimation()
+                    //
+                   /* Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        GrimReaperAttackAnimation()
+                        Spacer(Modifier.width(20.dp))
+                        RunningManAnimation()
+                    }*/
                     //RunningManCanvas(modifier = Modifier.padding(top=200.dp))
+                    var progress by remember { mutableStateOf(0f) }
+
+                    LaunchedEffect(Unit) {
+                        val checkpoints = listOf(0f, 0.10f, 0.25f, 0.45f, 0.75f, 1f)
+
+                        for (i in 0 until checkpoints.lastIndex) {
+                            val start = checkpoints[i]
+                            val end = checkpoints[i + 1]
+
+                            val steps = 20 // Number of intermediate frames for smoothness
+                            val delayPerStep = 20L // ms per step
+
+                            for (step in 1..steps) {
+                                progress = start + (end - start) * (step / steps.toFloat())
+                                delay(delayPerStep)
+                            }
+
+                            delay(100) // Optional pause between sections
+                        }
+                    }
+
+
+
+                    GrimReaperChaseProgressBar(progress = progress)
+
                 }
             }
         }
@@ -73,16 +113,91 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun GrimReaperAttackAnimation() {
-    var attacking by remember { mutableStateOf(false) }
+fun GrimReaperChaseProgressBar(progress: Float) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val animatedProgress = progress.coerceIn(0f, 1f)
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(150.dp),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        // Progress bar as platform
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(15.dp)
+                .offset(y=-53.dp)
+                .background(Color.Gray)
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(animatedProgress)
+                .height(15.dp)
+                .offset(y=-53.dp)
+                .background(Color(0xFFBE002A))
+        )
+
+        // Grim Reaper (moves with progress)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 0.dp, end = 0.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .graphicsLayer {
+                            val maxOffset = screenWidth.toPx() - 100.dp.toPx()
+                            translationX = animatedProgress * maxOffset
+                        }
+                        .offset(x = (-20).dp)
+                ) {
+                    GrimReaperAttackAnimation(stop = animatedProgress == 1f)
+                }
+
+                // Running Man fixed at end
+                // Running Man fixed at end (disappears at 90%+ progress)
+                if (animatedProgress < 0.95f) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .offset(x = (2).dp, y = -35.dp)
+                    ) {
+                        RunningManAnimation()
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
+fun GrimReaperAttackAnimation(stop: Boolean) {
+    var attacking by remember { mutableStateOf(stop) }
 
     // Trigger the attack
-    LaunchedEffect(Unit) {
+    LaunchedEffect(stop) {
         while (true) {
             attacking = true
             delay(400)
             attacking = false
-            delay(1600)
+            delay(1200)
+            if(stop)
+            {
+                //attacking =false
+                break
+            }
         }
     }
 
@@ -99,6 +214,7 @@ fun GrimReaperAttackAnimation() {
     Box(
         modifier = Modifier
             .size(100.dp)
+            .offset(y=-35.dp)
             .padding(start = 20.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -136,8 +252,6 @@ fun GrimReaperAttackAnimation() {
     }
 }
 
-
-
 @Composable
 fun RunningManAnimation() {
     val infiniteTransition = rememberInfiniteTransition(label = "limbAnimations")
@@ -170,9 +284,7 @@ fun RunningManAnimation() {
     )
 
     Box(
-        modifier = Modifier
-            .size(300.dp)
-            .background(Color.White),
+        modifier = Modifier,
         contentAlignment = Alignment.Center
     ) {
         // Head
@@ -252,12 +364,12 @@ fun RunningManAnimation() {
 
 
 
-
+/*
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RunningManPreview() {
     RunningManAnimation()
-}
+}*/
 
 
 
