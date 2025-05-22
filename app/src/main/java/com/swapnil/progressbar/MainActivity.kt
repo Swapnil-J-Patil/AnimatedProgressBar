@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     var progress by remember { mutableStateOf(0f) }
                     var isAnimating by remember { mutableStateOf(false) }
-
+                    var buttonText by remember { mutableStateOf("Send Death") }
                     // This state will trigger recomposition for days left
                     val daysRemaining = (100 - (progress * 100)).toInt().coerceAtLeast(0)
 
@@ -104,7 +104,7 @@ class MainActivity : ComponentActivity() {
                             enabled = !isAnimating,
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBE002A)),
                         ) {
-                            Text(text = "Send Death",
+                            Text(text = buttonText,
                                 color = if(!isAnimating)Color.White else Color.Transparent)
                         }
 
@@ -133,7 +133,7 @@ class MainActivity : ComponentActivity() {
 
                                 delay(100)
                             }
-
+                            buttonText="Game Over"
                             isAnimating = false // Reset for next run
                         }
                     }
