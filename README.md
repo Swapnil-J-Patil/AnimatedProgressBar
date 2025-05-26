@@ -1,1 +1,1 @@
-Working on animated progress bar.
+Completed animated progress bar.
