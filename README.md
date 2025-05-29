@@ -1,6 +1,6 @@
 # ☠️ Grim Reaper Progress Bar – Jetpack Compose Animation
 
-A creative and animated progress bar built with Jetpack Compose where a Grim Reaper chases a running man. As the progress increases, the Grim Reaper gets closer, adding a fun, gamified sense of urgency to your UI.
+A creative and animated progress bar built with Jetpack Compose where a Grim Reaper chases a running man. As the progress increases, the Grim Reaper gets closer, adding a fun, gamified sense of urgency to your UI. (Not used any lottie animation)
 
 ## 📸 Demo  
 
