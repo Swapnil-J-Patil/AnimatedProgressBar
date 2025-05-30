@@ -4,7 +4,7 @@ A creative and animated progress bar built with Jetpack Compose where a Grim Rea
 
 ## 📸 Demo  
 
-<img src="https://github.com/user-attachments/assets/6567e426-0366-4a52-b511-d4dafd3c4b6b" alt="Grim Reaper Progress Animation" width="250">
+<img src="https://github.com/user-attachments/assets/388e08eb-8816-4541-89b9-44dcb128af90" alt="Grim Reaper Progress Animation" width="250">
 
 ## 🛠️ Features  
 
